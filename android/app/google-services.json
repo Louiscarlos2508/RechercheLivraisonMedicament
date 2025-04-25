@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "384094956935",
+    "project_id": "recherchelivraisonmedicament",
+    "storage_bucket": "recherchelivraisonmedicament.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384094956935:android:b5f237135f8be1e6607722",
+        "android_client_info": {
+          "package_name": "com.siso.recherchelivraisonmedicament"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfTdi-cWiDR61Hn7t5hfBZwc-C4E8TQPU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
