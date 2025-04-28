@@ -83,4 +83,5 @@ class DefaultFirebaseOptions {
     authDomain: 'recherchelivraisonmedicament.firebaseapp.com',
     storageBucket: 'recherchelivraisonmedicament.firebasestorage.app',
   );
+
 }
