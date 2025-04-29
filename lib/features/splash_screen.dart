@@ -1,13 +1,29 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
+import 'package:recherchelivraisonmedicament/routes.dart';
 
-class SplashScreen extends StatelessWidget{
+class SplashScreen extends StatefulWidget{
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    Timer(const Duration(seconds: 5), (){
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary_color,
+      backgroundColor: AppColors.primarycolor,
       body: Stack(
         children: [
           Center(
@@ -25,7 +41,7 @@ class SplashScreen extends StatelessWidget{
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.surface_color
+                    color: AppColors.surfacecolor
                   ),
                 )
               ],
@@ -53,7 +69,7 @@ class SplashScreen extends StatelessWidget{
                 ],
               ),
             ),
-            
+
           ),
         ],
       ),
