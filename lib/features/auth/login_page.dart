@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
+import 'package:recherchelivraisonmedicament/core/services/components/my_button.dart';
 import 'package:recherchelivraisonmedicament/core/services/components/my_textfield.dart';
 
 class LoginPage extends StatefulWidget{
 
-
-  const LoginPage({super.key});
+  final VoidCallback? onTap;
+  const LoginPage({
+    super.key,
+    required this.onTap
+  });
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -13,9 +17,11 @@ class LoginPage extends StatefulWidget{
 
 class _LoginPageState extends State<LoginPage> {
   //controllers
-  final TextEditingController emailControler = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
-  final TextEditingController passwordControler = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  //login methode
+  void login(){}
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
               MyTextField(
                   hintText: "Email",
                   obscureText: false,
-                  controller: emailControler
+                  controller: emailController
               ),
 
               const SizedBox(height: 10,),
@@ -58,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
               MyTextField(
                   hintText: "Mot de passe",
                   obscureText: true,
-                  controller: passwordControler
+                  controller: passwordController
               ),
 
               const SizedBox(height: 10,),
@@ -68,11 +74,34 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Text('Mot de passe oublié?'),
                 ],
-              )
+              ),
+
+              const SizedBox(height: 25,),
 
               //sign in button
+              MyButton(
+                  text: "Se connecter",
+                  onTap: login
+              ),
+
+              const SizedBox(height: 25,),
 
               //don't have an accunt? register
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Vous n'avez pas de compte?"),
+                  GestureDetector(
+                    onTap: widget.onTap,
+                    child: const Text(
+                        " S'inscrire ici",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                ],
+              ),
 
 
             ],
