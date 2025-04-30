@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
 import 'package:recherchelivraisonmedicament/core/services/components/my_button.dart';
 import 'package:recherchelivraisonmedicament/core/services/components/my_textfield.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../core/services/helper/helper_funtions.dart';
 
 class RegisterPage extends StatefulWidget{
 
@@ -23,7 +26,58 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPwController = TextEditingController();
   //login methode
-  void register(){}
+  void register () async{
+
+    //show loading circle
+    showDialog(
+        context: context,
+        builder: (context) => const Center(child: CircularProgressIndicator(),
+        )
+    );
+
+    if (usernameController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        phoneNumberController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmPwController.text.isEmpty) {
+      displayMessageToUser("Veuillez remplir tous les champs", context);
+      return;
+    }
+
+    //make sure passwords match
+    if(passwordController.text != confirmPwController.text){
+      //pop loading circular
+      Navigator.pop(context);
+
+      //show error message to user
+      displayMessageToUser("Les mots de passe ne correspondent pas", context);
+      return;
+    }else{
+      //try creating the user
+      try{
+        //create the user
+        UserCredential? userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text
+        );
+        await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+          'nom': usernameController.text.trim(),
+          'email': emailController.text.trim(),
+          'telephone': phoneNumberController.text.trim(),
+          'role': 'patient',
+          'createdAt': Timestamp.now(),
+        });
+        if (!mounted) return;
+        //pop loading circular
+        Navigator.pop(context);
+        displayMessageToUser("Compte créé avec succès", context);
+      } on FirebaseAuthException catch (e) {
+        Navigator.pop(context);
+        displayMessageToUser(e.message ?? "Erreur inconnue", context);
+      }
+    }
+    
+  }
 
   @override
   Widget build(BuildContext context) {

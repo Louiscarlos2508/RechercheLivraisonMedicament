@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                   controller: passwordController
               ),
 
-              const SizedBox(height: 10,),
+              const SizedBox(height: 15,),
               //forgot password
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

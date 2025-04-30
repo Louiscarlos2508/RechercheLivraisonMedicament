@@ -1,0 +1,2 @@
+/home/soutonnoma/StudioProjects/recherchelivraisonmedicament/android/app/.cxx/Debug/6m1t6x61/x86_64/CMakeFiles/edit_cache.dir
+/home/soutonnoma/StudioProjects/recherchelivraisonmedicament/android/app/.cxx/Debug/6m1t6x61/x86_64/CMakeFiles/rebuild_cache.dir
