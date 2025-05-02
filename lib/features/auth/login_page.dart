@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
-import 'package:recherchelivraisonmedicament/core/services/components/my_button.dart';
-import 'package:recherchelivraisonmedicament/core/services/components/my_textfield.dart';
-import 'package:recherchelivraisonmedicament/core/services/helper/helper_funtions.dart';
+import 'package:recherchelivraisonmedicament/core/widgets/my_button.dart';
+import 'package:recherchelivraisonmedicament/core/widgets/my_textfield.dart';
+import 'package:recherchelivraisonmedicament/core/utils/helper_funtions.dart';
 import 'package:recherchelivraisonmedicament/routes.dart';
 
 class LoginPage extends StatefulWidget{
