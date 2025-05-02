@@ -13,6 +13,10 @@ class _NewRequestPageState extends State<NewRequestPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundcolor,
+      appBar: AppBar(
+        backgroundColor: AppColors.primarycolor,
+        automaticallyImplyLeading: false,
+      ),
       body: Center(child: Text("Demande")),
     );
   }

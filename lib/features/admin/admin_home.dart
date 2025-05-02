@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
 
-import '../../routes.dart';
+import '../../routes/app_routes.dart';
 
 class AdminHome extends StatelessWidget {
   const AdminHome({super.key});

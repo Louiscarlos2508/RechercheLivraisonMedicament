@@ -4,8 +4,8 @@ import 'package:recherchelivraisonmedicament/features/auth/forgot_password_page.
 import 'package:recherchelivraisonmedicament/features/auth/register_page.dart';
 import 'package:recherchelivraisonmedicament/features/delivery/livreur_home.dart';
 import 'package:recherchelivraisonmedicament/features/patient/patient_home.dart';
-import 'features/auth/login_page.dart';
-import 'features/splash_screen.dart';
+import '../features/auth/login_page.dart';
+import '../features/splash_screen.dart';
 
 class AppRoutes{
 

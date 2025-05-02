@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:recherchelivraisonmedicament/core/services/firebase_options.dart';
-import 'package:recherchelivraisonmedicament/routes.dart';
+import 'package:recherchelivraisonmedicament/routes/app_routes.dart';
 
 
 void main() async{

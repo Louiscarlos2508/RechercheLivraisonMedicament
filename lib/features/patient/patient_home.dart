@@ -1,9 +1,7 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
-import 'package:recherchelivraisonmedicament/features/patient/profile_page.dart';
-import 'package:recherchelivraisonmedicament/routes.dart';
+import 'package:recherchelivraisonmedicament/features/patient/profile/profile_page.dart';
 
 import 'home/home_content.dart';
 import 'orders/new_request_page.dart';
@@ -42,32 +40,10 @@ class _PatientHomeState extends State<PatientHome> {
     },
   ];
 
-  void logout(BuildContext context) async{
-    await FirebaseAuth.instance.signOut();
-
-    if (context.mounted) {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        AppRoutes.login,
-            (route) => false,
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundcolor,
-      appBar: AppBar(
-        backgroundColor: AppColors.primarycolor,
-        actions: [
-          IconButton(
-              onPressed: () => logout(context),
-              icon: Icon(Icons.logout)
-          )
-        ],
-        automaticallyImplyLeading: false,
-      ),
       body: SafeArea(
         child: _screens[_currentIndex]['widget'],
       ),

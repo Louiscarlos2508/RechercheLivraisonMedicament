@@ -6,10 +6,17 @@ class HomeContent extends StatelessWidget { // Changer en StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        "Home",
-        style: TextStyle(fontSize: 24, color: AppColors.textPrimarycolor),
+    return Scaffold(
+      backgroundColor: AppColors.backgroundcolor,
+      appBar: AppBar(
+        backgroundColor: AppColors.primarycolor,
+        automaticallyImplyLeading: false,
+      ),
+      body: Center(
+        child: Text(
+          "Home",
+          style: TextStyle(fontSize: 24, color: AppColors.textPrimarycolor),
+        ),
       ),
     );
   }

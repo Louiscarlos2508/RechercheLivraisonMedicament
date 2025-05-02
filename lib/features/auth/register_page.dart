@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
-import 'package:recherchelivraisonmedicament/core/widgets/my_button.dart';
+import 'package:recherchelivraisonmedicament/core/widgets/my_gesture_detector_button.dart';
 import 'package:recherchelivraisonmedicament/core/widgets/my_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:recherchelivraisonmedicament/routes.dart';
+import 'package:recherchelivraisonmedicament/routes/app_routes.dart';
 import '../../core/utils/helper_funtions.dart';
 
 class RegisterPage extends StatefulWidget{
