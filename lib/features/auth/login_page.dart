@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
 import 'package:recherchelivraisonmedicament/core/services/components/my_button.dart';
 import 'package:recherchelivraisonmedicament/core/services/components/my_textfield.dart';
+import 'package:recherchelivraisonmedicament/core/services/helper/helper_funtions.dart';
+import 'package:recherchelivraisonmedicament/routes.dart';
 
 class LoginPage extends StatefulWidget{
 
@@ -21,7 +25,57 @@ class _LoginPageState extends State<LoginPage> {
 
   final TextEditingController passwordController = TextEditingController();
   //login methode
-  void login(){}
+  void login() async{
+    showDialog(context: context,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        )
+    );
+
+    if(emailController.text.isEmpty || passwordController.text.isEmpty) {
+      Navigator.pop(context);
+      displayMessageToUser("Veuillez remplir tous les champ", context);
+      return;
+    }
+    // auth
+    try{
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: emailController.text.trim(), password: passwordController.text.trim()
+      );
+
+      final uid = userCredential.user!.uid;
+
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(uid)
+      .get();
+
+      if (!mounted) return;
+      if(!userDoc.exists){
+        Navigator.pop(context);
+        displayMessageToUser("Utilisateur non trouvé", context);
+        return;
+      }
+
+      final role = userDoc['role'];
+      Navigator.pop(context);
+
+
+      if(role == 'admin'){
+        Navigator.pushReplacementNamed(context, AppRoutes.adminHome);
+      }else if(role == 'patient'){
+        Navigator.pushReplacementNamed(context, AppRoutes.patientHome);
+      }else if(role == 'livreur'){
+        Navigator.pushReplacementNamed(context, AppRoutes.livreurHome);
+      }else{
+        Navigator.pop(context);
+        displayMessageToUser("Utilisateur non trouvé", context);
+      }
+    }on FirebaseAuthException catch (e){
+      Navigator.pop(context);
+      displayMessageToUser(e.message ?? "Une erreur s'est produite", context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +126,15 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('Mot de passe oublié?'),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.resetPassword);
+                    },
+                    child: Text('Mot de passe oublié?', style:
+                    TextStyle(
+                        color: Colors.blueAccent
+                    ),),
+                  )
                 ],
               ),
 
@@ -97,6 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                         " S'inscrire ici",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
+                        color: Colors.blueAccent
                       ),
                     ),
                   )

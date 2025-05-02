@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:recherchelivraisonmedicament/features/admin/admin_home.dart';
+import 'package:recherchelivraisonmedicament/features/auth/forgot_password_page.dart';
 import 'package:recherchelivraisonmedicament/features/auth/register_page.dart';
+import 'package:recherchelivraisonmedicament/features/delivery/livreur_home.dart';
+import 'package:recherchelivraisonmedicament/features/patient/patient_home.dart';
 import 'features/auth/login_page.dart';
 import 'features/splash_screen.dart';
 
@@ -12,6 +15,7 @@ class AppRoutes{
   static const String adminHome = '/adminHome';
   static const String livreurHome = '/livreurHome';
   static const String patientHome = '/patientHome';
+  static const String resetPassword = '/resetPassword';
 
 
   static Map<String, WidgetBuilder> routes = {
@@ -27,7 +31,8 @@ class AppRoutes{
       },
     ),
     adminHome: (context) => AdminHome(),
-    livreurHome: (context) => AdminHome(),
-    patientHome: (context) => AdminHome(),
+    livreurHome: (context) => LivreurHome(),
+    patientHome: (context) => PatientHome(),
+    resetPassword: (context) => ForgotPasswordPage(),
   };
 }

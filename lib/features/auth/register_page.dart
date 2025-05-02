@@ -4,6 +4,7 @@ import 'package:recherchelivraisonmedicament/core/services/components/my_button.
 import 'package:recherchelivraisonmedicament/core/services/components/my_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:recherchelivraisonmedicament/routes.dart';
 import '../../core/services/helper/helper_funtions.dart';
 
 class RegisterPage extends StatefulWidget{
@@ -40,6 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
         phoneNumberController.text.isEmpty ||
         passwordController.text.isEmpty ||
         confirmPwController.text.isEmpty) {
+      Navigator.pop(context);
       displayMessageToUser("Veuillez remplir tous les champs", context);
       return;
     }
@@ -71,6 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
         //pop loading circular
         Navigator.pop(context);
         displayMessageToUser("Compte créé avec succès", context);
+        Navigator.pushReplacementNamed(context, AppRoutes.patientHome);
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
         displayMessageToUser(e.message ?? "Erreur inconnue", context);
@@ -174,6 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           " Se connecter ici",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
+                            color: Colors.blueAccent
                           ),
                         ),
                       )
