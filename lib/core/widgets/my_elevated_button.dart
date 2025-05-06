@@ -3,18 +3,18 @@ import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
 
 class MyElevatedButton extends StatelessWidget {
   final String text;
-  final VoidCallback? onTap;
+  final VoidCallback? onPressed;
 
   const MyElevatedButton({
     super.key,
     required this.text,
-    required this.onTap,
+    required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onTap,
+      onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primarycolor,
         padding: const EdgeInsets.all(20),
