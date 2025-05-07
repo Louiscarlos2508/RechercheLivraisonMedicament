@@ -3,7 +3,7 @@ import 'package:recherchelivraisonmedicament/features/admin/admin_home.dart';
 import 'package:recherchelivraisonmedicament/features/auth/forgot_password_page.dart';
 import 'package:recherchelivraisonmedicament/features/auth/register_page.dart';
 import 'package:recherchelivraisonmedicament/features/delivery/livreur_home.dart';
-import 'package:recherchelivraisonmedicament/features/patient/orders/new_request_page.dart';
+import 'package:recherchelivraisonmedicament/features/patient/orders/history_page.dart';
 import 'package:recherchelivraisonmedicament/features/patient/patient_home.dart';
 import 'package:recherchelivraisonmedicament/features/patient/profile/about_page.dart';
 import 'package:recherchelivraisonmedicament/features/patient/profile/help_page.dart';
@@ -45,7 +45,7 @@ class AppRoutes{
     patientHome: (context) => PatientHome(),
     resetPassword: (context) => ForgotPasswordPage(),
     updateProfilePage: (context) => UpdateProfilePage(),
-    requestHistoryPage: (context) => NewRequestPage(),
+    requestHistoryPage: (context) => HistoryPage(),
     aboutPage: (context) => AboutPage(),
     helpPage: (context) => HelpPage(),
     settingsPage: (context) => SettingsPage(),
