@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 Future<String?> submitDemande({
-  required List<String> listeDemande,
+  required List<Map<String, dynamic>> listeDemande,
   required File? ordonnanceImage,
   required bool besoinUrgent,
 }) async {
@@ -14,6 +14,7 @@ Future<String?> submitDemande({
 
   final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
   final phoneNumber = userDoc.data()?['telephone'] ?? '';
+  final double prixTotal = 0;
 
   if (listeDemande.isEmpty && ordonnanceImage == null) {
     return "Veuillez ajouter au moins un médicament ou une ordonnance.";
@@ -37,6 +38,7 @@ Future<String?> submitDemande({
       "urgent": besoinUrgent,
       "timestamp": FieldValue.serverTimestamp(),
       'statut': 'en attente',
+      'prixTotal': prixTotal,
     });
 
     return null;

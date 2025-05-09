@@ -20,7 +20,7 @@ class _NewRequestPageState extends State<NewRequestPage> {
   final TextEditingController dosageController = TextEditingController();
   final TextEditingController quantiteController = TextEditingController();
   String uniteDosage = 'mg';
-  List<String> listeDemande = [];
+  List<Map<String, dynamic>> listeDemande = [];
   bool besoinUrgent = false;
   File? ordonnanceImage;
   bool _isLoading = false;
@@ -155,7 +155,13 @@ class _NewRequestPageState extends State<NewRequestPage> {
 
                   if (nom.isNotEmpty && dosage.isNotEmpty && quantite.isNotEmpty) {
                     setState(() {
-                      listeDemande.add("$nom - $dosage $uniteDosage - Quantité : $quantite");
+                      listeDemande.add({
+                        'nom': nom,
+                        'dosage': dosage,
+                        'unite': uniteDosage,
+                        'quantite': quantite,
+                        'prix': null,
+                      });
                       nomController.clear();
                       dosageController.clear();
                       quantiteController.clear();
@@ -276,7 +282,7 @@ class _NewRequestPageState extends State<NewRequestPage> {
                   final med = listeDemande[index];
                   return Card(
                     child: ListTile(
-                      title: Text(med),
+                      title: Text("${med['nom']} - ${med['dosage']} ${med['unite']} - Quantité : ${med['quantite']}"),
                       trailing: IconButton(
                         icon: Icon(Icons.delete, color: Colors.red),
                         onPressed: () => setState(() => listeDemande.removeAt(index)),

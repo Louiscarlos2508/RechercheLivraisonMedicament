@@ -41,47 +41,46 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDda7wdb0hPDe-3MFIdit11Q4QhqbS8_XA',
-    appId: '1:384094956935:web:f68b10bcb9dcbb77607722',
-    messagingSenderId: '384094956935',
-    projectId: 'recherchelivraisonmedicament',
-    authDomain: 'recherchelivraisonmedicament.firebaseapp.com',
-    storageBucket: 'recherchelivraisonmedicament.firebasestorage.app',
+    apiKey: 'AIzaSyDSitt3KKoQi1lmgfKkahWSSc_PtK03ZNM',
+    appId: '1:436269061105:web:4bdf3b5f7335c93d242a50',
+    messagingSenderId: '436269061105',
+    projectId: 'recherchelivraisonmedica-f311e',
+    authDomain: 'recherchelivraisonmedica-f311e.firebaseapp.com',
+    storageBucket: 'recherchelivraisonmedica-f311e.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBfTdi-cWiDR61Hn7t5hfBZwc-C4E8TQPU',
-    appId: '1:384094956935:android:b5f237135f8be1e6607722',
-    messagingSenderId: '384094956935',
-    projectId: 'recherchelivraisonmedicament',
-    storageBucket: 'recherchelivraisonmedicament.firebasestorage.app',
+    apiKey: 'AIzaSyAgIXIP_H-K44TSh6b3X7wpEuGNigDsZkk',
+    appId: '1:436269061105:android:9b0ce90489a795f7242a50',
+    messagingSenderId: '436269061105',
+    projectId: 'recherchelivraisonmedica-f311e',
+    storageBucket: 'recherchelivraisonmedica-f311e.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAbx8FMH8kGEt4l9on4BR3ph30dDaOpw5Y',
-    appId: '1:384094956935:ios:89f22cfd779f9882607722',
-    messagingSenderId: '384094956935',
-    projectId: 'recherchelivraisonmedicament',
-    storageBucket: 'recherchelivraisonmedicament.firebasestorage.app',
+    apiKey: 'AIzaSyDc1QzRHTUJh9m6Yw7570vSJGjDKbwl8S4',
+    appId: '1:436269061105:ios:8a478286eefa4a81242a50',
+    messagingSenderId: '436269061105',
+    projectId: 'recherchelivraisonmedica-f311e',
+    storageBucket: 'recherchelivraisonmedica-f311e.firebasestorage.app',
     iosBundleId: 'com.siso.recherchelivraisonmedicament',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAbx8FMH8kGEt4l9on4BR3ph30dDaOpw5Y',
-    appId: '1:384094956935:ios:89f22cfd779f9882607722',
-    messagingSenderId: '384094956935',
-    projectId: 'recherchelivraisonmedicament',
-    storageBucket: 'recherchelivraisonmedicament.firebasestorage.app',
+    apiKey: 'AIzaSyDc1QzRHTUJh9m6Yw7570vSJGjDKbwl8S4',
+    appId: '1:436269061105:ios:8a478286eefa4a81242a50',
+    messagingSenderId: '436269061105',
+    projectId: 'recherchelivraisonmedica-f311e',
+    storageBucket: 'recherchelivraisonmedica-f311e.firebasestorage.app',
     iosBundleId: 'com.siso.recherchelivraisonmedicament',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDda7wdb0hPDe-3MFIdit11Q4QhqbS8_XA',
-    appId: '1:384094956935:web:ec8e1a3f6cbd9a56607722',
-    messagingSenderId: '384094956935',
-    projectId: 'recherchelivraisonmedicament',
-    authDomain: 'recherchelivraisonmedicament.firebaseapp.com',
-    storageBucket: 'recherchelivraisonmedicament.firebasestorage.app',
+    apiKey: 'AIzaSyDSitt3KKoQi1lmgfKkahWSSc_PtK03ZNM',
+    appId: '1:436269061105:web:6f818da4caeb30b3242a50',
+    messagingSenderId: '436269061105',
+    projectId: 'recherchelivraisonmedica-f311e',
+    authDomain: 'recherchelivraisonmedica-f311e.firebaseapp.com',
+    storageBucket: 'recherchelivraisonmedica-f311e.firebasestorage.app',
   );
-
 }
