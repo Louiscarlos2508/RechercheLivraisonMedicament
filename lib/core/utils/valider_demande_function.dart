@@ -2,6 +2,13 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:intl/intl.dart';
+
+String generateNumeroCommande() {
+  final now = DateTime.now();
+  final formatter = DateFormat('yyyyMMddHHmmss');
+  return 'CMD-${formatter.format(now)}';  // Exemple: CMD-20230509123545
+}
 
 Future<String?> submitDemande({
   required List<Map<String, dynamic>> listeDemande,
@@ -33,6 +40,7 @@ Future<String?> submitDemande({
       "userId": user.uid,
       "email": user.email,
       "phoneNumber": phoneNumber,
+      'numero_commande': generateNumeroCommande(),
       "medicaments": listeDemande,
       "ordonnanceUrl": ordonnanceUrl,
       "urgent": besoinUrgent,
