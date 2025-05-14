@@ -259,7 +259,7 @@ class _NewRequestPageState extends State<NewRequestPage> {
       appBar: AppBar(
         title: Text(
           "Demander un médicament",
-          style: TextStyle(color: AppColors.surfacecolor, fontSize: 20),
+          style: TextStyle(color: AppColors.surfacecolor, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         toolbarHeight: 64,

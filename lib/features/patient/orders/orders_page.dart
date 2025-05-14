@@ -136,6 +136,7 @@ class _OrdersPageState extends State<OrdersPage> {
         backgroundColor: AppColors.primarycolor,
         title: Text('Commandes', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.surfacecolor)),
         centerTitle: true,
+        toolbarHeight: 64,
         actions: [
           IconButton(
             icon: Icon(Icons.refresh,color: AppColors.surfacecolor,),
@@ -157,7 +158,7 @@ class _OrdersPageState extends State<OrdersPage> {
                   // Filtre par statut
                   DropdownButton<String>(
                     value: _selectedStatus,
-                    items: ['Tous', 'en attente', 'accepte', 'paiement en attente']
+                    items: ['Tous', 'en attente', 'acceptée', 'paiement en attente', 'refusée']
                         .map((status) => DropdownMenuItem(value: status, child: Text(status)))
                         .toList(),
                     onChanged: (value) {
