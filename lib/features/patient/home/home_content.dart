@@ -22,7 +22,6 @@ class _HomeContentState extends State<HomeContent> {
   String userName = "";
   int unreadNotifications = 3; // valeur temporaire, remplace ensuite avec Firebase
   final ScrollController _scrollController = ScrollController();
-  int _scrollPosition = 0;
   Timer? _scrollTimer;
 
   static const List<String> healthAdvices = [
@@ -40,13 +39,20 @@ class _HomeContentState extends State<HomeContent> {
     fetchUserName();
     _scrollTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_scrollController.hasClients) {
-        final maxScroll = _scrollController.position.maxScrollExtent;
-        if (_scrollController.offset >= maxScroll) {
-          _scrollController.jumpTo(0); // recommencer
-        } else {
-          _scrollPosition += 220; // largeur estimée de la carte + padding
+        final maxScrollExtent = _scrollController.position.maxScrollExtent;
+        final currentOffset = _scrollController.offset;
+        double nextOffset = currentOffset + 220;
+
+        if (nextOffset >= maxScrollExtent) {
+          // Revenir doucement au début
           _scrollController.animateTo(
-            _scrollPosition.toDouble(),
+            0,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        } else {
+          _scrollController.animateTo(
+            nextOffset,
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,
           );
