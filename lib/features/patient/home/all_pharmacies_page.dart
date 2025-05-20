@@ -10,6 +10,7 @@ class AllPharmaciesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundcolor,
       appBar: AppBar(
         title: const Text("Toutes les pharmacies", style: TextStyle(color: AppColors.surfacecolor),),
         backgroundColor: AppColors.primarycolor,
@@ -27,7 +28,12 @@ class AllPharmaciesPage extends StatelessWidget {
           ),
           itemCount: pharmacies.length,
           itemBuilder: (context, index) {
-            return PharmacyCard(name: pharmacies[index]);
+            final pharmacy = pharmacies[index];
+            return PharmacyCard(
+              name: pharmacy.name,
+              address: pharmacy.address,
+              distanceInKm: pharmacy.distanceInKm,
+            );
           },
         ),
       ),
