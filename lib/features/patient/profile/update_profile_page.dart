@@ -118,8 +118,9 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundcolor,
       appBar: AppBar(
-        title: Text("Modifier le profil"),
+        title: Text("Modifier le profil", style: TextStyle(color: AppColors.surfacecolor),),
         centerTitle: true,
+        backgroundColor: AppColors.primarycolor,
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

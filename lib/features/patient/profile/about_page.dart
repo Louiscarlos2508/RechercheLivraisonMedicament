@@ -16,8 +16,9 @@ class _AboutPageState extends State<AboutPage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundcolor,
       appBar: AppBar(
-        title: Text("À propos"),
+        title: Text("À propos", style: TextStyle(color: AppColors.surfacecolor),),
         centerTitle: true,
+        backgroundColor: AppColors.primarycolor,
       ),
     );
   }

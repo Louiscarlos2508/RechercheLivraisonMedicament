@@ -15,8 +15,9 @@ class _HistoryPageState extends State<HistoryPage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundcolor,
       appBar: AppBar(
-        title: Text("Historique des demandes"),
+        title: Text("Historique des demandes", style: TextStyle(color: AppColors.surfacecolor),),
         centerTitle: true,
+        backgroundColor: AppColors.primarycolor,
       ),
     );
   }

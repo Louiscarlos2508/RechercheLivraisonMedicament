@@ -65,9 +65,9 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundcolor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.primarycolor,
         centerTitle: true,
-        title: Text("Profil"),
+        title: Text("Profil", style: TextStyle(color: AppColors.surfacecolor),),
         automaticallyImplyLeading: true,
       ),
       body:isLoading

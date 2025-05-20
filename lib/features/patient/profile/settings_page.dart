@@ -16,8 +16,9 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundcolor,
       appBar: AppBar(
-        title: Text("Paramètres"),
+        title: Text("Paramètres", style: TextStyle(color: AppColors.surfacecolor),),
         centerTitle: true,
+        backgroundColor: AppColors.primarycolor,
       ),
     );
   }
