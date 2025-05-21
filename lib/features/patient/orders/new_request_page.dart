@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
 
@@ -257,36 +256,42 @@ class _NewRequestPageState extends State<NewRequestPage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundcolor,
       appBar: AppBar(
-        title: Text(
-          "Demander un médicament",
-          style: TextStyle(color: AppColors.surfacecolor, fontSize: 20, fontWeight: FontWeight.bold),
-        ),
+        title: const Text("Nouvelle demande", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.surfacecolor)),
         centerTitle: true,
-        toolbarHeight: 64,
         backgroundColor: AppColors.primarycolor,
-        automaticallyImplyLeading: false,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showFloatingOptions,
         backgroundColor: AppColors.primarycolor,
-        child: Icon(Icons.add, color: AppColors.surfacecolor),
+        child: const Icon(Icons.add),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             Expanded(
               child: listeDemande.isEmpty
-                  ? Center(child: Text("Liste vide ! Cliquez sur + pour ajouter."))
-                  : ListView.builder(
+                  ? const Center(child: Text("Aucun médicament ajouté. Cliquez sur + pour commencer."))
+                  : ListView.separated(
                 itemCount: listeDemande.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 10),
                 itemBuilder: (context, index) {
                   final med = listeDemande[index];
                   return Card(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 2,
                     child: ListTile(
-                      title: Text("${med['nom']} - ${med['dosage']} ${med['unite']} - Quantité : ${med['quantite']}"),
+                      leading: CircleAvatar(
+                        backgroundColor: AppColors.primarycolor.withValues(alpha: 0.1),
+                        child: Icon(Icons.medication, color: AppColors.primarycolor),
+                      ),
+                      title: Text(
+                        med['nom'],
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text("Dosage : ${med['dosage']} ${med['unite']} • Quantité : ${med['quantite']}"),
                       trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
+                        icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () => setState(() => listeDemande.removeAt(index)),
                       ),
                     ),
@@ -294,115 +299,106 @@ class _NewRequestPageState extends State<NewRequestPage> {
                 },
               ),
             ),
+
             if (ordonnanceImage != null) ...[
-              /*Container(
-                height: 150,
-                width: double.infinity,
-                margin: EdgeInsets.only(bottom: 12),
+              Container(
+                margin: const EdgeInsets.only(top: 12, bottom: 12),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: AppColors.primarycolor),
-                  image: DecorationImage(
-                    image: FileImage(ordonnanceImage!),
-                    fit: BoxFit.cover,
-                  ),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ),*/
-              Row(
-                children: [
-                  Icon(Icons.receipt_long, color: AppColors.primarycolor),
-                  SizedBox(width: 8),
-                  Expanded(child: Text("Ordonnance ajoutée")),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.visibility, color: AppColors.primarycolor,),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                              content: Image.file(ordonnanceImage!),
-                            ),
-                          );
-                        },
+                child: Row(
+                  children: [
+                    Icon(Icons.receipt_long, color: AppColors.primarycolor),
+                    const SizedBox(width: 12),
+                    const Expanded(child: Text("Ordonnance ajoutée")),
+                    IconButton(
+                      icon: const Icon(Icons.visibility),
+                      color: AppColors.primarycolor,
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          content: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(ordonnanceImage!),
+                          ),
+                        ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => setState(() => ordonnanceImage = null),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => setState(() => ordonnanceImage = null),
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(height: 12),
             ],
-            Divider(),
-            SizedBox(height: 12),
+
+            Divider(color: Colors.grey.shade300),
+            const SizedBox(height: 8),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Besoin urgent ?"),
+                const Text("Besoin urgent ?", style: TextStyle(fontSize: 16)),
                 Switch(
                   value: besoinUrgent,
-                  onChanged: (value) => setState(() => besoinUrgent = value),
+                  onChanged: (val) => setState(() => besoinUrgent = val),
                   activeColor: AppColors.primarycolor,
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
+
             ElevatedButton(
-              onPressed: _isLoading ? null : () async {
-                setState(() => _isLoading = true);
-
-                final message = await submitDemande(
-                  listeDemande: listeDemande,
-                  ordonnanceImage: ordonnanceImage,
-                  besoinUrgent: besoinUrgent,
-                );
-
-                if (!context.mounted) return;
-
-                setState(() => _isLoading = false);
-
-                if (message != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-                } else {
-                  setState(() {
-                    listeDemande.clear();
-                    ordonnanceImage = null;
-                    besoinUrgent = false;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Demande envoyée avec succès.")),
-                  );
-                }
-              },
+              onPressed: _isLoading ? null : _handleSubmit,
               style: ElevatedButton.styleFrom(
-                backgroundColor: _isLoading
-                    ? Colors.grey.shade300
-                    : Color(0xFF4CAF93).withValues(alpha: 1),
-                minimumSize: Size(double.infinity, 48),
-                elevation: 0,
+                backgroundColor: _isLoading ? Colors.grey.shade300 : AppColors.primarycolor,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               child: _isLoading
-                  ? SizedBox(
-                height: 24,
+                  ? const SizedBox(
                 width: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-                ),
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
               )
-                  : Text(
-                "Valider la demande",
-                style: TextStyle(color: AppColors.surfacecolor),
-              ),
+                  : const Text("Valider la demande", style: TextStyle(color: Colors.white)),
             ),
-            SizedBox(height: 65)
+            const SizedBox(height: 70),
           ],
         ),
       ),
     );
   }
+  Future<void> _handleSubmit() async {
+    setState(() => _isLoading = true);
+
+    final message = await submitDemande(
+      listeDemande: listeDemande,
+      ordonnanceImage: ordonnanceImage,
+      besoinUrgent: besoinUrgent,
+    );
+
+    if (!mounted) return;
+
+    setState(() => _isLoading = false);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message ?? "Demande envoyée avec succès")),
+    );
+
+    if (message == null) {
+      setState(() {
+        listeDemande.clear();
+        ordonnanceImage = null;
+        besoinUrgent = false;
+      });
+    }
+  }
+
+
 }
+
+

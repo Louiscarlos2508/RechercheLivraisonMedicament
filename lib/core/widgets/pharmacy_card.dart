@@ -1,76 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
 
 class PharmacyCard extends StatelessWidget {
   final String name;
   final String address;
   final double distanceInKm;
+  final double? width;
+  final double? height;
 
   const PharmacyCard({
     super.key,
     required this.name,
     required this.address,
     required this.distanceInKm,
+    this.width,
+    this.height,
   });
 
   @override
   Widget build(BuildContext context) {
+    final gradientStart = AppColors.primarycolor;
+    final gradientEnd = Colors.teal.shade100;
+
     return Container(
-      height: 110,
-      width: 200,
+      height: height ?? 120,
+      width: width ?? 220,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(25),
         gradient: LinearGradient(
-          colors: [Colors.teal.shade300, Colors.teal.shade100],
+          colors: [gradientStart, gradientEnd],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.teal.withValues(alpha: 0.3),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
+            color: gradientStart.withValues(alpha: 0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Nom pharmacie avec ombre légère
           Text(
             name,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 19,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              shadows: [
+                Shadow(
+                  blurRadius: 3,
+                  color: Colors.black.withValues(alpha: 0.25),
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
+          // Ligne adresse avec icône stylisé
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.location_on, size: 16, color: Colors.white),
-              const SizedBox(width: 4),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.location_on,
+                  size: 18,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   address,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.white,
-                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.85),
+                    fontSize: 14,
+                    height: 1.3,
+                  ),
                 ),
               ),
             ],
           ),
           const Spacer(),
-          Text(
-            '${distanceInKm.toStringAsFixed(1)} km',
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: Colors.white70,
+          // Distance avec petit badge arrondi
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                '${distanceInKm.toStringAsFixed(1)} km',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
             ),
           ),
         ],

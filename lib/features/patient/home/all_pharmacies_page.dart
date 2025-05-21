@@ -24,7 +24,7 @@ class AllPharmaciesPage extends StatelessWidget {
             crossAxisCount: 2, // 2 cards par ligne
             crossAxisSpacing: 15,
             mainAxisSpacing: 15,
-            childAspectRatio: 1.8, // Forme proche de tes cartes horizontales
+            childAspectRatio: 1.3,
           ),
           itemCount: pharmacies.length,
           itemBuilder: (context, index) {
@@ -35,6 +35,7 @@ class AllPharmaciesPage extends StatelessWidget {
               distanceInKm: pharmacy.distanceInKm,
             );
           },
+
         ),
       ),
     );

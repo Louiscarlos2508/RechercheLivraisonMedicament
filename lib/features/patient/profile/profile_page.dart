@@ -15,7 +15,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   String? userName;
   String? userEmail;
   String? userPhone;
@@ -48,9 +47,8 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  void logout(BuildContext context) async{
+  void logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
-
     if (context.mounted) {
       Navigator.pushNamedAndRemoveUntil(
         context,
@@ -66,86 +64,102 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: AppColors.backgroundcolor,
       appBar: AppBar(
         backgroundColor: AppColors.primarycolor,
+        title: const Text("Mon Profil", style: TextStyle(color: Colors.white)),
         centerTitle: true,
-        title: Text("Profil", style: TextStyle(color: AppColors.surfacecolor),),
-        automaticallyImplyLeading: true,
       ),
-      body:isLoading
-          ? const Center(child: CircularProgressIndicator())
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator(color: AppColors.primarycolor))
           : SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(25),
-            child: Column(
-              children: [
-                Icon(Icons.person, size: 120,),
-                const SizedBox(height: 15,),
-                Text(userName ?? 'Nom inconnu', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
-                Text(userEmail ?? 'Email inconnu', style: TextStyle(fontSize: 15)),
-                Text("Tel: ${userPhone ?? 'Inconnu'}", style: TextStyle(fontSize: 15)),
-                const SizedBox(height: 15,),
-                SizedBox(
-                  width: 200,
-                  child: MyElevatedButton(
-                      text: "Modifier",
-                      onPressed: () async {
-                        final updated = await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => UpdateProfilePage()),
-                        );
-                        if (updated == true) {
-                          fetchUserData();
-                        }
-                      }
-                  ),
-                ),
-                const SizedBox(height: 30,),
-                const Divider(),
-                const SizedBox(height: 10,),
-
-                ProfileMenuWidget(
-                  title: "Historique des demandes",
-                  icon: Icons.history,
-                  onPress: (){
-                    Navigator.pushNamed(context, AppRoutes.requestHistoryPage);
-                  },
-                ),
-                ProfileMenuWidget(
-                  title: "Paramètres",
-                  icon: Icons.settings,
-                  onPress: (){
-                    Navigator.pushNamed(context, AppRoutes.settingsPage);
-                  },
-                ),
-                ProfileMenuWidget(
-                  title: "Soutien/Aide",
-                  icon: Icons.help,
-                  onPress: (){
-                    Navigator.pushNamed(context, AppRoutes.helpPage);
-                  },
-                ),
-                const Divider(),
-                const SizedBox(height: 10,),
-                ProfileMenuWidget(
-                  title: "À propos",
-                  icon: Icons.info,
-                  onPress: (){
-                    Navigator.pushNamed(context, AppRoutes.aboutPage);
-                  },
-                ),
-                ProfileMenuWidget(
-                  title: "Se déconnecter",
-                  icon: Icons.logout,
-                  textColor: Colors.red,
-                  endIcon: false,
-                  onPress: () => logout(context),
-                ),
-
-              ],
-            ),
-          )
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            _buildProfileHeader(context),
+            const SizedBox(height: 30),
+            const Divider(),
+            const SizedBox(height: 10),
+            _buildMenuItems(),
+          ],
+        ),
       ),
     );
   }
+
+  Widget _buildProfileHeader(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        child: Column(
+          children: [
+            const CircleAvatar(
+              radius: 45,
+              backgroundColor: AppColors.primarycolor,
+              child: Icon(Icons.person, size: 50, color: Colors.white),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              userName ?? 'Nom inconnu',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(userEmail ?? 'Email inconnu', style: TextStyle(color: Colors.grey[600])),
+            const SizedBox(height: 2),
+            Text("Téléphone : ${userPhone ?? 'Inconnu'}", style: TextStyle(color: Colors.grey[600])),
+            const SizedBox(height: 15),
+            SizedBox(
+              width: 160,
+              child: MyElevatedButton(
+                text: "Modifier le profil",
+                onPressed: () async {
+                  final updated = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const UpdateProfilePage()),
+                  );
+                  if (updated == true) {
+                    fetchUserData();
+                  }
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItems() {
+    return Column(
+      children: [
+        ProfileMenuWidget(
+          title: "Historique des demandes",
+          icon: Icons.history,
+          onPress: () => Navigator.pushNamed(context, AppRoutes.requestHistoryPage),
+        ),
+        ProfileMenuWidget(
+          title: "Paramètres",
+          icon: Icons.settings,
+          onPress: () => Navigator.pushNamed(context, AppRoutes.settingsPage),
+        ),
+        ProfileMenuWidget(
+          title: "Soutien / Aide",
+          icon: Icons.help_outline,
+          onPress: () => Navigator.pushNamed(context, AppRoutes.helpPage),
+        ),
+        const Divider(),
+        ProfileMenuWidget(
+          title: "À propos",
+          icon: Icons.info_outline,
+          onPress: () => Navigator.pushNamed(context, AppRoutes.aboutPage),
+        ),
+        ProfileMenuWidget(
+          title: "Se déconnecter",
+          icon: Icons.logout,
+          textColor: Colors.red,
+          endIcon: false,
+          onPress: () => logout(context),
+        ),
+      ],
+    );
+  }
 }
-
-

@@ -3,12 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
-import 'package:recherchelivraisonmedicament/core/utils/helper_funtions.dart';
-import 'package:recherchelivraisonmedicament/routes/app_routes.dart';
-
+import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/helper_funtions.dart';
 import '../../../core/widgets/my_elevated_button.dart';
-
+import '../../../routes/app_routes.dart';
 
 class UpdateProfilePage extends StatefulWidget {
   const UpdateProfilePage({super.key});
@@ -18,15 +16,15 @@ class UpdateProfilePage extends StatefulWidget {
 }
 
 class _UpdateProfilePageState extends State<UpdateProfilePage> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController currentPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final currentPasswordController = TextEditingController();
 
   String? createdAtText;
   bool isLoading = true;
-
 
   @override
   void initState() {
@@ -41,16 +39,14 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       final data = snapshot.data();
       if (data != null) {
         await initializeDateFormatting('fr_FR', null);
-        final Timestamp? createdAt = data['createdAt'];
-        String? createdAtText;
-        if (createdAt != null) {
-          createdAtText = DateFormat('dd MMMM yyyy à HH:mm', 'fr_FR').format(createdAt.toDate());
-        }
+        final createdAt = data['createdAt'] as Timestamp?;
         setState(() {
           nameController.text = data['nom'] ?? '';
           emailController.text = data['email'] ?? '';
           phoneController.text = data['telephone'] ?? '';
-          this.createdAtText = createdAtText;
+          createdAtText = createdAt != null
+              ? DateFormat('dd MMMM yyyy à HH:mm', 'fr_FR').format(createdAt.toDate())
+              : null;
           isLoading = false;
         });
       }
@@ -59,48 +55,95 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   Future<void> updateProfile() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      try {
-        // Réauthentification si mot de passe actuel fourni
-        if (currentPasswordController.text.isNotEmpty) {
-          final credential = EmailAuthProvider.credential(
-            email: user.email!,
-            password: currentPasswordController.text.trim(),
-          );
-          await user.reauthenticateWithCredential(credential);
-        }
+    if (user == null) return;
 
-
-        // Mise à jour des données Firestore
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-          'nom': nameController.text.trim(),
-          'email': emailController.text.trim(),
-          'telephone': phoneController.text.trim(),
-        });
-        if (!mounted) return;
-        displayMessageToUser("Profil mis à jour avec succès", context);
-        // Mise à jour du mot de passe
-        if (newPasswordController.text.isNotEmpty) {
-          await user.updatePassword(newPasswordController.text.trim());
-        }
-
-        if (!mounted) return;
-        displayMessageToUser("Profil mis à jour avec succès", context);
-
-        Navigator.pop(context, true);
-      } on FirebaseAuthException catch (e) {
-        String message = 'Erreur inconnue';
-        if (e.code == 'wrong-password') {
-          message = 'Mot de passe actuel incorrect';
-        } else if (e.code == 'requires-recent-login') {
-          message = 'Veuillez vous reconnecter pour changer le mot de passe.';
-        } else {
-          message = e.message ?? message;
-        }
-
-        displayMessageToUser(message, context);
+    try {
+      if (currentPasswordController.text.isNotEmpty) {
+        final credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: currentPasswordController.text.trim(),
+        );
+        await user.reauthenticateWithCredential(credential);
       }
+
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+        'nom': nameController.text.trim(),
+        'email': emailController.text.trim(),
+        'telephone': phoneController.text.trim(),
+      });
+
+      if (newPasswordController.text.isNotEmpty) {
+        await user.updatePassword(newPasswordController.text.trim());
+      }
+
+      if (!mounted) return;
+      displayMessageToUser("Profil mis à jour avec succès", context);
+      Navigator.pop(context, true);
+    } on FirebaseAuthException catch (e) {
+      final message = switch (e.code) {
+        'wrong-password' => 'Mot de passe actuel incorrect',
+        'requires-recent-login' => 'Veuillez vous reconnecter pour changer le mot de passe.',
+        _ => e.message ?? 'Erreur inconnue'
+      };
+      displayMessageToUser(message, context);
     }
+  }
+
+  Future<void> deleteAccount() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Supprimer le compte"),
+        content: const Text("Voulez-vous vraiment supprimer votre compte ? Cette action est irréversible."),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Annuler")),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Supprimer", style: TextStyle(color: Colors.red))),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
+      await user.delete();
+      await FirebaseAuth.instance.signOut();
+
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
+      displayMessageToUser("Compte supprimé avec succès.", context);
+    } on FirebaseAuthException catch (e) {
+      final msg = e.code == 'requires-recent-login'
+          ? "Veuillez vous reconnecter pour supprimer votre compte."
+          : "Erreur : ${e.message}";
+      if (!mounted) return;
+      displayMessageToUser(msg, context);
+    }
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool obscure = false,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscure,
+      decoration: InputDecoration(
+        label: Text(label, style: TextStyle(color: AppColors.textSecondarycolor)),
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(100)),
+        floatingLabelStyle: TextStyle(color: AppColors.primarycolor),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(100),
+          borderSide: const BorderSide(width: 2, color: AppColors.primarycolor),
+        ),
+      ),
+    );
   }
 
   @override
@@ -118,187 +161,51 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundcolor,
       appBar: AppBar(
-        title: Text("Modifier le profil", style: TextStyle(color: AppColors.surfacecolor),),
+        title: const Text("Modifier le profil", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: AppColors.primarycolor,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          :SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(25),
+          ? const Center(child: CircularProgressIndicator(color: AppColors.primarycolor))
+          : SingleChildScrollView(
+        padding: const EdgeInsets.all(25),
+        child: Form(
+          key: _formKey,
           child: Column(
             children: [
-              Icon(Icons.person, size: 120,),
-              const SizedBox(height: 25,),
-              Form(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20,),
-                      TextFormField(
-                        controller: nameController,
-                        decoration: InputDecoration(
-                            label: Text("Nom complet", style:
-                              TextStyle(
-                                color: AppColors.textSecondarycolor
-                              ),),
-                          prefixIcon: Icon(Icons.person_outline_rounded),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(100)),
-                          floatingLabelStyle: TextStyle(color: AppColors.primarycolor),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            borderSide: const BorderSide(width: 2, color: AppColors.primarycolor)
-                          )
-                            ),
-                      ),
-                      const SizedBox(height: 20,),
-                      TextFormField(
-                        controller: emailController,
-                        decoration: InputDecoration(
-                            label: Text("E-mail", style:
-                            TextStyle(
-                                color: AppColors.textSecondarycolor
-                            ),),
-                            prefixIcon: Icon(Icons.email_outlined),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(100)),
-                            floatingLabelStyle: TextStyle(color: AppColors.primarycolor),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(100),
-                                borderSide: const BorderSide(width: 2, color: AppColors.primarycolor)
-                            )
-                        ),
-                      ),
-                      const SizedBox(height: 20,),
-                      TextFormField(
-                        controller: phoneController,
-                        decoration: InputDecoration(
-                            label: Text("Numero de téléphone", style:
-                            TextStyle(
-                                color: AppColors.textSecondarycolor
-                            ),),
-                            prefixIcon: Icon(Icons.numbers),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(100)),
-                            floatingLabelStyle: TextStyle(color: AppColors.primarycolor),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(100),
-                                borderSide: const BorderSide(width: 2, color: AppColors.primarycolor)
-                            )
-                        ),
-                      ),
-                      const SizedBox(height: 20,),
-                      TextFormField(
-                        controller: currentPasswordController,
-                        decoration: InputDecoration(
-                            label: Text("Mot de passe actuel", style:
-                            TextStyle(
-                                color: AppColors.textSecondarycolor
-                            ),),
-                            prefixIcon: Icon(Icons.fingerprint),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(100)),
-                            floatingLabelStyle: TextStyle(color: AppColors.primarycolor),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(100),
-                                borderSide: const BorderSide(width: 2, color: AppColors.primarycolor)
-                            )
-                        ),
-                      ),
-                      const SizedBox(height: 20,),
-                      TextFormField(
-                        controller: newPasswordController,
-                        decoration: InputDecoration(
-                            label: Text("Nouveau Mot de passe", style:
-                            TextStyle(
-                                color: AppColors.textSecondarycolor
-                            ),),
-                            prefixIcon: Icon(Icons.fingerprint),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(100)),
-                            floatingLabelStyle: TextStyle(color: AppColors.primarycolor),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(100),
-                                borderSide: const BorderSide(width: 2, color: AppColors.primarycolor)
-                            )
-                        ),
-                      ),
-                      const SizedBox(height: 20,),
-                      SizedBox(
-                        width: double.infinity,
-                        child: MyElevatedButton(
-                            text: "Modifier",
-                            onPressed: updateProfile
-                        ),
-                      ),
-                      const SizedBox(height: 20,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          if (createdAtText != null)
-                            RichText(
-                              text: TextSpan(
-                                text: "Créé le ",
-                                style: const TextStyle(fontSize: 12, color: Colors.black),
-                                children: [
-                                  TextSpan(
-                                    text: createdAtText!,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              final contextToUse = context; // 👈 Capture du context avant les awaits
-                              final user = FirebaseAuth.instance.currentUser;
-
-                              if (user != null) {
-                                final confirm = await showDialog<bool>(
-                                  context: contextToUse,
-                                  builder: (ctx) => AlertDialog(
-                                    title: const Text("Supprimer le compte"),
-                                    content: const Text("Voulez-vous vraiment supprimer votre compte ? Cette action est irréversible."),
-                                    actions: [
-                                      TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("Annuler")),
-                                      TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text("Supprimer", style: TextStyle(color: Colors.red))),
-                                    ],
-                                  ),
-                                );
-
-                                if (confirm != true) return;
-
-                                try {
-                                  await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
-                                  await user.delete();
-
-                                  await FirebaseAuth.instance.signOut();
-
-                                  if (!contextToUse.mounted) return;
-
-                                  Navigator.pushReplacementNamed(context, AppRoutes.login);
-
-                                  Navigator.of(contextToUse).pop();
-                                  displayMessageToUser("Compte supprimé avec succès.", contextToUse);
-                                } on FirebaseAuthException catch (e) {
-                                  if (!contextToUse.mounted) return;
-                                  if (e.code == 'requires-recent-login') {
-                                    displayMessageToUser("Veuillez vous reconnecter pour supprimer votre compte.", contextToUse);
-                                  } else {
-                                    displayMessageToUser("Erreur : ${e.message}", contextToUse);
-                                  }
-                                }
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent.withValues(alpha: 0.1),
-                              foregroundColor: Colors.red,
-                              elevation: 0,
-                              shape: const StadiumBorder(),
-                              side: BorderSide.none,
-                            ),
-                            child: const Text("Supprimer"),
-                          )
-                        ],
-                      )
-                    ],
-                  )
+              const Icon(Icons.person, size: 100),
+              const SizedBox(height: 20),
+              _buildTextField(controller: nameController, label: "Nom complet", icon: Icons.person_outline_rounded),
+              const SizedBox(height: 20),
+              _buildTextField(controller: emailController, label: "E-mail", icon: Icons.email_outlined),
+              const SizedBox(height: 20),
+              _buildTextField(controller: phoneController, label: "Numéro de téléphone", icon: Icons.phone),
+              const SizedBox(height: 20),
+              _buildTextField(controller: currentPasswordController, label: "Mot de passe actuel", icon: Icons.lock_outline, obscure: true),
+              const SizedBox(height: 20),
+              _buildTextField(controller: newPasswordController, label: "Nouveau mot de passe", icon: Icons.lock_open, obscure: true),
+              const SizedBox(height: 25),
+              SizedBox(
+                width: double.infinity,
+                child: MyElevatedButton(text: "Modifier", onPressed: updateProfile),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (createdAtText != null)
+                    Text("Créé le $createdAtText", style: const TextStyle(fontSize: 12)),
+                  ElevatedButton(
+                    onPressed: deleteAccount,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.withValues(alpha: 0.1),
+                      foregroundColor: Colors.red,
+                      elevation: 0,
+                      shape: const StadiumBorder(),
+                    ),
+                    child: const Text("Supprimer"),
+                  ),
+                ],
               )
             ],
           ),

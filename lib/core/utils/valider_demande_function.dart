@@ -2,13 +2,13 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:intl/intl.dart';
 
-String generateNumeroCommande() {
-  final now = DateTime.now();
-  final formatter = DateFormat('yyyyMMddHHmmss');
-  return 'CMD-${formatter.format(now)}';  // Exemple: CMD-20230509123545
+String generateShortNumeroCommande() {
+  final milliseconds = DateTime.now().millisecondsSinceEpoch;
+  return 'CMD${milliseconds.toRadixString(36).toUpperCase()}';
 }
+
+
 
 Future<String?> submitDemande({
   required List<Map<String, dynamic>> listeDemande,
@@ -40,12 +40,12 @@ Future<String?> submitDemande({
       "userId": user.uid,
       "email": user.email,
       "phoneNumber": phoneNumber,
-      'numero_commande': generateNumeroCommande(),
+      'numero_commande': generateShortNumeroCommande(),
       "medicaments": listeDemande,
       "ordonnanceUrl": ordonnanceUrl,
       "urgent": besoinUrgent,
       "timestamp": FieldValue.serverTimestamp(),
-      'statut': 'en attente',
+      'statut': 'En attente',
       'prixTotal': prixTotal,
     });
 

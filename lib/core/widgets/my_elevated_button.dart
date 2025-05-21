@@ -17,7 +17,7 @@ class MyElevatedButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primarycolor,
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
