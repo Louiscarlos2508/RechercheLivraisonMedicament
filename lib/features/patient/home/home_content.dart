@@ -231,7 +231,7 @@ class _HomeContentState extends State<HomeContent> {
                 )
               ]
             ),
-            const SizedBox(height: 1),
+            const SizedBox(height: 5),
             SizedBox(
               height: 70,
               child: ListView.separated(
@@ -244,7 +244,7 @@ class _HomeContentState extends State<HomeContent> {
                 },
               ),
             ),
-
+            const SizedBox(height: 15),
             // Ligne de titre + bouton
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -271,7 +271,7 @@ class _HomeContentState extends State<HomeContent> {
             ),
             // Grille scrollable avec 2 lignes max
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(5),
               child: GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(), // important pour éviter conflit de scroll
@@ -293,7 +293,7 @@ class _HomeContentState extends State<HomeContent> {
               ),
             ),
 
-            const SizedBox(height: 5),
+            const SizedBox(height: 15),
             const Text(
               "Mes dernières demandes",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

@@ -263,7 +263,7 @@ class _NewRequestPageState extends State<NewRequestPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showFloatingOptions,
         backgroundColor: AppColors.primarycolor,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white,),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

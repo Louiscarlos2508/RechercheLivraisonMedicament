@@ -244,7 +244,7 @@ class _OrdersPageState extends State<OrdersPage> {
                       _fetchOrders();
                     }
                   },
-                  icon: const Icon(Icons.calendar_today, size: 16),
+                  icon: const Icon(Icons.calendar_today, size: 16, color: Colors.white,),
                   label: Text(
                     _selectedDate == null
                         ? 'Date'
