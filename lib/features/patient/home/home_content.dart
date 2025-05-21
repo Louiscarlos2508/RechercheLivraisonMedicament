@@ -206,6 +206,7 @@ class _HomeContentState extends State<HomeContent> {
                     backgroundColor: Colors.white,
                     child: Icon(Icons.person, color: AppColors.primarycolor),
                   ),*/
+
                 ],
               ),
             ],
