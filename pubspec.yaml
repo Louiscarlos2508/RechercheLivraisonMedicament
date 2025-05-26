@@ -49,6 +49,7 @@ dependencies:
   latlong2: ^0.9.1
   shared_preferences: ^2.5.3
   google_maps_flutter: ^2.12.2
+  geocoding: ^3.0.0
 
 dev_dependencies:
   flutter_test:

@@ -49,7 +49,7 @@ Future<String?> submitDemande({
       'prixTotal': prixTotal,
     });
 
-    return null;
+    return FirebaseFirestore.instance.collection("demandes").id;
   } catch (e) {
     return "Erreur : ${e.toString()}";
   }

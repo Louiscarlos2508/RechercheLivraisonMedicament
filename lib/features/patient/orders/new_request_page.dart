@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
 
 import '../../../core/utils/valider_demande_function.dart';
+import 'choose_delevery_location_page.dart';
 
 class NewRequestPage extends StatefulWidget {
   const NewRequestPage({super.key});
@@ -375,7 +376,7 @@ class _NewRequestPageState extends State<NewRequestPage> {
   Future<void> _handleSubmit() async {
     setState(() => _isLoading = true);
 
-    final message = await submitDemande(
+    final result = await submitDemande(
       listeDemande: listeDemande,
       ordonnanceImage: ordonnanceImage,
       besoinUrgent: besoinUrgent,
@@ -383,22 +384,31 @@ class _NewRequestPageState extends State<NewRequestPage> {
 
     if (!mounted) return;
 
-    setState(() => _isLoading = false);
+    setState(() => _isLoading = false); // ✅ Toujours désactiver le loader ici
+
+    if (result == null || result.startsWith("Erreur") || result == "Utilisateur non connecté") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result ?? "Une erreur est survenue."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message ?? "Demande envoyée avec succès")),
+      const SnackBar(content: Text("Demande envoyée avec succès")),
     );
 
-    if (message == null) {
-      setState(() {
-        listeDemande.clear();
-        ordonnanceImage = null;
-        besoinUrgent = false;
-      });
-    }
+    final demandeId = result;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChooseDeliveryLocationPage(demandeId: demandeId),
+      ),
+    );
   }
-
-
 }
 
 
