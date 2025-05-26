@@ -25,6 +25,7 @@ class _HomeContentState extends State<HomeContent> {
   int unreadNotifications = 3; // valeur temporaire, remplace ensuite avec Firebase
   final ScrollController _scrollController = ScrollController();
   Timer? _scrollTimer;
+  Future<List<Pharmacy>>? _pharmaciesFuture;
 
   static const List<String> healthAdvices = [
     "Buvez 1,5L d'eau par jour",
@@ -44,6 +45,7 @@ class _HomeContentState extends State<HomeContent> {
     super.initState();
     fetchUserName();
     loadRecentRequests();
+    _pharmaciesFuture = PharmacyService.fetchNearbyPharmacies();
 
     _scrollTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_scrollController.hasClients) {
@@ -105,10 +107,6 @@ class _HomeContentState extends State<HomeContent> {
 
   @override
   Widget build(BuildContext context) {
-    // On limite à 4 pour l'affichage
-    final List<Pharmacy> displayedPharmacies =
-    pharmacies.length > 2 ? pharmacies.sublist(0, 2) : pharmacies;
-
     return Scaffold(
       backgroundColor: AppColors.backgroundcolor,
       appBar: PreferredSize(
@@ -273,22 +271,30 @@ class _HomeContentState extends State<HomeContent> {
             // Grille scrollable avec 2 lignes max
             Padding(
               padding: const EdgeInsets.all(5),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(), // important pour éviter conflit de scroll
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
-                  childAspectRatio: 1.17,
-                ),
-                itemCount: displayedPharmacies.length,
-                itemBuilder: (context, index) {
-                  final pharmacy = displayedPharmacies[index];
-                  return PharmacyCard(
-                    name: pharmacy.name,
-                    address: pharmacy.address,
-                    distanceInKm: pharmacy.distanceInKm,
+              child: FutureBuilder<List<Pharmacy>>(
+                future: _pharmaciesFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Text("Erreur : ${snapshot.error}");
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Text("Aucune pharmacie trouvée.");
+                  }
+
+                  final pharmacies = snapshot.data!;
+                  final displayedPharmacies = pharmacies.length > 2
+                      ? pharmacies.sublist(0, 2)
+                      : pharmacies;
+
+                  return Column(
+                    children: displayedPharmacies
+                        .map((pharmacy) => PharmacyCard(
+                      name: pharmacy.name,
+                      address: pharmacy.address,
+                      distanceInKm: pharmacy.distanceInKm,
+                    ))
+                        .toList(),
                   );
                 },
               ),
