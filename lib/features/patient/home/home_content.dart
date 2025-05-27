@@ -6,7 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/demande_box.dart';
 import '../../../core/widgets/health_advice_card.dart';
 import '../../../core/widgets/pharmacy_card.dart';
-import '../notifications_page.dart';
+import 'notifications_page.dart';
 import 'all_pharmacies_page.dart';
 import 'data/pharmacies_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';

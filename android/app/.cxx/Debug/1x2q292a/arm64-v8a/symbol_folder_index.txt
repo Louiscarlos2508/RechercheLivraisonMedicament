@@ -1,0 +1,1 @@
+/home/soutonnoma/StudioProjects/recherchelivraisonmedicament/build/app/intermediates/cxx/Debug/1x2q292a/obj/arm64-v8a
