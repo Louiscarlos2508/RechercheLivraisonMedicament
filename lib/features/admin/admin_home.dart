@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
 import 'package:recherchelivraisonmedicament/features/admin/Profil/profil_page_admin.dart';
 import 'package:recherchelivraisonmedicament/features/admin/delivery/livreur_page_admin.dart';
-import 'package:recherchelivraisonmedicament/features/admin/home_content_admin.dart';
 import 'package:recherchelivraisonmedicament/features/admin/orders/orders_page_admin.dart';
 
 
@@ -23,11 +22,13 @@ class _AdminHomeState extends State<AdminHome> {
   );
 
   final List<Map<String, dynamic>> _screens = [
-    {
+    /*{
       'widget': HomeContentAdmin(),
       'icon': Icons.home,
       'label': 'Accueil',
     },
+
+     */
     {
       'widget': OrdersPageAdmin(),
       'icon': Icons.shopping_bag,

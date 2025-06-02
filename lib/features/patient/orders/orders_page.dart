@@ -178,7 +178,7 @@ class _OrdersPageState extends State<OrdersPage> {
     switch (status) {
       case 'En attente':
         return Colors.orange;
-      case 'Eccepte':
+      case 'Acceptée':
         return Colors.green;
       case 'Paiement en attente':
         return Colors.blue;
