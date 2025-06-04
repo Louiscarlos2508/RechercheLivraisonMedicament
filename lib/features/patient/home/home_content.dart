@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
@@ -97,6 +97,7 @@ class _HomeContentState extends State<HomeContent> {
           });
         }
       }
+      await Geolocator.requestPermission();
     } catch (e) {
       if (kDebugMode) {
         print('Erreur récupération nom utilisateur: $e');

@@ -19,8 +19,12 @@ class _NewOrdersPageState extends State<NewOrdersPage> {
         return Colors.green;
       case 'Paiement en attente':
         return Colors.blue;
+      case 'Livraison en cours':
+        return Colors.yellow;
       case 'Refusée':
         return Colors.red;
+      case 'Terminée':
+        return Colors.greenAccent;
       default:
         return Colors.black;
     }
@@ -40,7 +44,8 @@ class _NewOrdersPageState extends State<NewOrdersPage> {
       final statut = data['statut'] ?? '';
       if (statut != 'En attente' &&
           statut != 'Paiement en attente' &&
-          statut != 'Acceptée') {
+          statut != 'Acceptée' &&
+          statut != 'Livraison en cours') {
         continue;
       }
 

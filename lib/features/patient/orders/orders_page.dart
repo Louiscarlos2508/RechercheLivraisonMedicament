@@ -149,7 +149,7 @@ class _OrdersPageState extends State<OrdersPage> {
                           ),
                           child: const Text('Payer'),
                         ),
-                      if (orderDetails['statut'] == 'Accepte')
+                      if (orderDetails['statut'] == 'Livraison en cours')
                         OutlinedButton(
                           onPressed: () {},
                           style: OutlinedButton.styleFrom(
@@ -182,8 +182,12 @@ class _OrdersPageState extends State<OrdersPage> {
         return Colors.green;
       case 'Paiement en attente':
         return Colors.blue;
+      case 'Livraison en cours':
+        return Colors.yellow;
       case 'Refusée':
         return Colors.red;
+      case 'Terminée':
+        return Colors.greenAccent;
       default:
         return Colors.black;
     }
@@ -221,7 +225,7 @@ class _OrdersPageState extends State<OrdersPage> {
                     _fetchOrders();
                   },
                 ),
-                ...['En attente', 'Acceptée', 'Paiement en attente', 'Refusée'].map((status) {
+                ...['En attente', 'Acceptée', 'Paiement en attente', 'Refusée', 'Livraison en cours', 'Terminée'].map((status) {
                   return ChoiceChip(
                     label: Text(status),
                     selected: _selectedStatus == status,
