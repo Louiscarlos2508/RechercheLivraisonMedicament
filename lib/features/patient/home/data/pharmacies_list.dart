@@ -34,7 +34,7 @@ class Pharmacy {
 
 class PharmacyService {
   // TO DO : https://console.cloud.google.com/apis/library/places-backend.googleapis.com  pour recuperer l'api
-  static const String _apiKey = 'VOTRE_CLE_API'; // à remplacer
+  static const String _apiKey = 'AIzaSyAPc3Yr4Xx_0fRf_3IXWQNavP_X2-6FxBY';
   static const String _cacheKey = 'cached_pharmacies';
   static const String _cacheTimestampKey = 'cached_timestamp';
   static const String _cacheLocationKey = 'cached_location';
