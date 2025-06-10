@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "436269061105",
-    "project_id": "recherchelivraisonmedica-f311e",
-    "storage_bucket": "recherchelivraisonmedica-f311e.firebasestorage.app"
+    "project_number": "281188786362",
+    "project_id": "recherchelivraisonmedica-feca8",
+    "storage_bucket": "recherchelivraisonmedica-feca8.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:436269061105:android:9b0ce90489a795f7242a50",
+        "mobilesdk_app_id": "1:281188786362:android:9ce541fffeb5fb84d6e283",
         "android_client_info": {
           "package_name": "com.siso.recherchelivraisonmedicament"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAgIXIP_H-K44TSh6b3X7wpEuGNigDsZkk"
+          "current_key": "AIzaSyDuCzqZ9UCykd9oKLCspVnbvyQMSMP0ZVc"
         }
       ],
       "services": {
