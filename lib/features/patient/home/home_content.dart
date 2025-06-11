@@ -22,10 +22,11 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   String userName = "";
-  int unreadNotifications = 3; // valeur temporaire, remplace ensuite avec Firebase
+  late final String userId;
   final ScrollController _scrollController = ScrollController();
   Timer? _scrollTimer;
-  Future<List<Pharmacy>>? _pharmaciesFuture;
+
+  late Future<List<Pharmacy>> _pharmaciesFuture;
 
   static const List<String> healthAdvices = [
     "Buvez 1,5L d'eau par jour",
@@ -44,6 +45,7 @@ class _HomeContentState extends State<HomeContent> {
   void initState() {
     super.initState();
     fetchUserName();
+    userId = FirebaseAuth.instance.currentUser?.uid ?? "";
     loadRecentRequests();
     _pharmaciesFuture = PharmacyService.fetchNearbyPharmacies();
 
@@ -73,6 +75,18 @@ class _HomeContentState extends State<HomeContent> {
     setState(() {
       demandesRecentes = data;
       isLoading = false;
+    });
+  }
+
+  Stream<int> getUnreadNotificationCount(String userId) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .snapshots()
+        .map((doc) {
+      final notifications = List<Map<String, dynamic>>.from(doc.data()?['notifications'] ?? []);
+      final unread = notifications.where((notif) => notif['isRead'] == false).length;
+      return unread;
     });
   }
 
@@ -152,10 +166,12 @@ class _HomeContentState extends State<HomeContent> {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  // Bouton de notification
-                  Stack(
+              StreamBuilder<int>(
+                stream: getUnreadNotificationCount(userId),
+                builder: (context, snapshot) {
+                  final unreadCount = snapshot.data ?? 0;
+
+                  return Stack(
                     children: [
                       IconButton(
                         icon: const Icon(Icons.notifications_none, color: Colors.white, size: 28),
@@ -166,26 +182,20 @@ class _HomeContentState extends State<HomeContent> {
                           );
                         },
                       ),
-                      if (unreadNotifications > 0)
+                      if (unreadCount > 0)
                         Positioned(
                           right: 6,
                           top: 6,
                           child: Container(
                             padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: Colors.redAccent,
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.red.withValues(alpha: 0.6),
-                                  blurRadius: 6,
-                                )
-                              ],
                             ),
                             constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
                             child: Center(
                               child: Text(
-                                '$unreadNotifications',
+                                '$unreadCount',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,
@@ -196,124 +206,121 @@ class _HomeContentState extends State<HomeContent> {
                           ),
                         ),
                     ],
-                  ),
-
-                  // (Optionnel) Avatar utilisateur
-                  /*const SizedBox(width: 10),
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, color: AppColors.primarycolor),
-                  ),*/
-
-                ],
-              ),
+                  );
+                },
+              )
             ],
           ),
         ),
       ),
 
 
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                "Conseils Santé",
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                )
-                )
-              ]
-            ),
-            const SizedBox(height: 5),
-            SizedBox(
-              height: 70,
-              child: ListView.separated(
-                controller: _scrollController,
-                scrollDirection: Axis.horizontal,
-                itemCount: healthAdvices.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 15),
-                itemBuilder: (context, index) {
-                  return HealthAdviceCard(advice: healthAdvices[index]);
-                },
-              ),
-            ),
-            const SizedBox(height: 15),
-            // Ligne de titre + bouton
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Pharmacies de garde proches",
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                  "Conseils Santé",
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                  )
+                  )
+                ]
+              ),
+              const SizedBox(height: 5),
+              SizedBox(
+                height: 70,
+                child: ListView.separated(
+                  controller: _scrollController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: healthAdvices.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 15),
+                  itemBuilder: (context, index) {
+                    return HealthAdviceCard(advice: healthAdvices[index]);
+                  },
                 ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const AllPharmaciesPage(),
+              ),
+              const SizedBox(height: 15),
+              // Ligne de titre + bouton
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Pharmacies de garde proches",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_forward),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AllPharmaciesPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              // Grille scrollable avec 2 lignes max
+              Padding(
+                padding: const EdgeInsets.all(5),
+                child: FutureBuilder<List<Pharmacy>>(
+                  future: _pharmaciesFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator(color: AppColors.primarycolor,));
+                    } else if (snapshot.hasError) {
+                      return Text("Erreur : ${snapshot.error}");
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Text("Aucune pharmacie trouvée.");
+                    }
+        
+                    final pharmacies = snapshot.data!;
+                    final displayedPharmacies = pharmacies.length > 2
+                        ? pharmacies.sublist(0, 2)
+                        : pharmacies;
+        
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: displayedPharmacies
+                            .map((pharmacy) => PharmacyCard(
+                          name: pharmacy.name,
+                          address: pharmacy.address,
+                          distanceInKm: pharmacy.distanceInKm,
+                        ))
+                            .expand((card) => [card, const SizedBox(width: 10)])
+                            .toList(),
                       ),
                     );
                   },
                 ),
-              ],
-            ),
-            // Grille scrollable avec 2 lignes max
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: FutureBuilder<List<Pharmacy>>(
-                future: _pharmaciesFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Text("Erreur : ${snapshot.error}");
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Text("Aucune pharmacie trouvée.");
-                  }
-
-                  final pharmacies = snapshot.data!;
-                  final displayedPharmacies = pharmacies.length > 2
-                      ? pharmacies.sublist(0, 2)
-                      : pharmacies;
-
-                  return Column(
-                    children: displayedPharmacies
-                        .map((pharmacy) => PharmacyCard(
-                      name: pharmacy.name,
-                      address: pharmacy.address,
-                      distanceInKm: pharmacy.distanceInKm,
-                    ))
-                        .toList(),
-                  );
-                },
               ),
-            ),
-
-            const SizedBox(height: 15),
-            const Text(
-              "Mes dernières demandes",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 1),
-            isLoading
-                ? const Center(child: CircularProgressIndicator(color: AppColors.primarycolor))
-                : demandesRecentes.isEmpty
-                ? const Text("Aucune demande récente")
-                : DemandeRecente(demandes: getRecentDemandesMap(demandesRecentes)),
-
-          ],
+        
+              const SizedBox(height: 15),
+              const Text(
+                "Mes dernières demandes",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 1),
+              isLoading
+                  ? const Center(child: CircularProgressIndicator(color: AppColors.primarycolor))
+                  : demandesRecentes.isEmpty
+                  ? const Text("Aucune demande récente")
+                  : DemandeRecente(demandes: getRecentDemandesMap(demandesRecentes)),
+        
+            ],
+          ),
         ),
       ),
     );

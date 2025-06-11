@@ -70,7 +70,7 @@ class PharmacyService {
       "locationRestriction": {
         "circle": {
           "center": {"latitude": userLat, "longitude": userLng},
-          "radius": 4000.0
+          "radius": 10000.0
         }
       }
     };
@@ -114,7 +114,7 @@ class PharmacyService {
         address: address,
         distanceInKm: double.parse(dist.toStringAsFixed(2)),
       );
-    }).where((pharmacy) => pharmacy.distanceInKm <= 4).toList();
+    }).where((pharmacy) => pharmacy.distanceInKm <= 3).toList();
 
     // Cacher le résultat
     prefs.setString(_cacheKey, jsonEncode(pharmacies.map((e) => e.toMap()).toList()));

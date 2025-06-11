@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:recherchelivraisonmedicament/core/constants/app_colors.dart';
@@ -45,6 +46,69 @@ class _OrdersPageState extends State<OrdersPage> {
       );
     } finally {
       setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _deleteOrder({
+    required String orderId,
+    required String? prescriptionUrl,
+    required BuildContext context, // Passé explicitement
+  }) async {
+    // 1. Confirmation dialog (synchrone)
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmer l\'annulation'),
+        content: const Text('Voulez-vous vraiment annuler cette commande ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Non'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Oui', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    ) ?? false;
+
+    if (!confirmed) return;
+
+    // 2. Opérations asynchrones
+    try {
+      setState(() => _isLoading = true);
+
+      // Suppression Storage
+      if (prescriptionUrl != null && prescriptionUrl.isNotEmpty) {
+        try {
+          final filePath = prescriptionUrl.split('ordonnances%2F')[1].split('?')[0];
+          await FirebaseStorage.instance.ref('ordonnances/$filePath').delete();
+        } catch (e) {
+          debugPrint('Erreur suppression photo: $e');
+        }
+      }
+
+      // Suppression Firestore
+      await FirebaseFirestore.instance.collection('demandes').doc(orderId).delete();
+
+      // Rafraîchissement
+      await _fetchOrders();
+
+      // Affichage message (avec vérification mounted)
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Commande annulée')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur: ${e.toString()}')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -163,6 +227,28 @@ class _OrdersPageState extends State<OrdersPage> {
                         onPressed: () => Navigator.pop(context),
                         child: const Text('Fermer', style: TextStyle(color: Colors.red)),
                       ),
+
+                      if ((orderDetails['statut'] == 'En attente') ||
+                          (orderDetails['statut'] == 'Paiement en attente'))
+                        TextButton(
+                          onPressed: () {
+                            final orderDoc = _orders.firstWhere(
+                                  (doc) => (doc.data() as Map<String, dynamic>)['numero_commande'] ==
+                                  orderDetails['numero_commande'],
+                            );
+
+                            Navigator.pop(context); // Ferme d'abord le bottom sheet
+
+                            _deleteOrder(
+                              orderId: orderDoc.id,
+                              prescriptionUrl: orderDetails['ordonnanceUrl'],
+                              context: context, // Context passé explicitement
+                            );
+                          },
+                          child: const Text('Annuler la commande', style: TextStyle(
+                            color: Colors.black
+                          ),),
+                        ),
                     ],
                   ),
                 ],

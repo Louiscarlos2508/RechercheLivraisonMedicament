@@ -49,9 +49,9 @@ class _AllPharmaciesPageState extends State<AllPharmaciesPage> {
         centerTitle: true,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: AppColors.primarycolor))
           : pharmacies.isEmpty
-          ? const Center(child: Text("Aucune pharmacie à moins de 4 km"))
+          ? const Center(child: Text("Aucune pharmacie à moins de 3 km"))
           : Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.builder(
@@ -59,7 +59,7 @@ class _AllPharmaciesPageState extends State<AllPharmaciesPage> {
             crossAxisCount: 2,
             crossAxisSpacing: 15,
             mainAxisSpacing: 15,
-            childAspectRatio: 1.3,
+            childAspectRatio: 1.1,
           ),
           itemCount: pharmacies.length,
           itemBuilder: (context, index) {

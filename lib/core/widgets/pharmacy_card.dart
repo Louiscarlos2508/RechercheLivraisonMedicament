@@ -23,7 +23,7 @@ class PharmacyCard extends StatelessWidget {
     final gradientEnd = Colors.teal.shade100;
 
     return Container(
-      height: height ?? 120,
+      height: height ?? 150,
       width: width ?? 220,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
@@ -43,6 +43,7 @@ class PharmacyCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Nom pharmacie avec ombre légère
           Text(
@@ -96,11 +97,10 @@ class PharmacyCard extends StatelessWidget {
           ),
           const Spacer(),
           // Distance avec petit badge arrondi
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
+      Container(  // Remove Align and use simple Container
+        margin: const EdgeInsets.only(top: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.25),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -113,7 +113,6 @@ class PharmacyCard extends StatelessWidget {
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

@@ -401,6 +401,11 @@ class _NewRequestPageState extends State<NewRequestPage> {
     );
 
     final demandeId = result;
+    setState(() {
+      listeDemande.clear();
+      ordonnanceImage = null;
+      besoinUrgent = false;
+    });
 
     Navigator.push(
       context,

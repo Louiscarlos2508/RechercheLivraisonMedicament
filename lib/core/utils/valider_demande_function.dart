@@ -21,6 +21,7 @@ Future<String?> submitDemande({
 
   final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
   final phoneNumber = userDoc.data()?['telephone'] ?? '';
+  final nom = userDoc.data()?["nom"];
   final double prixTotal = 0;
 
   if (listeDemande.isEmpty && ordonnanceImage == null) {
@@ -36,10 +37,11 @@ Future<String?> submitDemande({
       ordonnanceUrl = await ref.getDownloadURL();
     }
 
-    await FirebaseFirestore.instance.collection("demandes").add({
+    final docRef = await FirebaseFirestore.instance.collection("demandes").add({
       "userId": user.uid,
       "email": user.email,
       "phoneNumber": phoneNumber,
+      "nom": nom,
       'numero_commande': generateShortNumeroCommande(),
       "medicaments": listeDemande,
       "ordonnanceUrl": ordonnanceUrl,
@@ -49,7 +51,7 @@ Future<String?> submitDemande({
       'prixTotal': prixTotal,
     });
 
-    return FirebaseFirestore.instance.collection("demandes").id;
+    return docRef.id;
   } catch (e) {
     return "Erreur : ${e.toString()}";
   }

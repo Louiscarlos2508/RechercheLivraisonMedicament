@@ -18,9 +18,11 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove"/>
 
     <application
+        android:enableOnBackInvokedCallback="true"
         android:label="recherchelivraisonmedicament"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        tools:targetApi="33">
 
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
@@ -41,6 +43,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAPc3Yr4Xx_0fRf_3IXWQNavP_X2-6FxBY"/>
 
         <meta-data
             android:name="flutterEmbedding"
